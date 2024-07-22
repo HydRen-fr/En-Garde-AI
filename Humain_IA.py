@@ -427,6 +427,7 @@ class Humain(Joueur):
 
     def defense_indirecte(self, plateau, cartes_attaque, jeu):
         carte_retraite = None
+        print(self.main)
         entree_retraite = input("Vous ne pouvez pas parer l'attaque. Choisissez une carte pour battre en retraite: ").strip()
         if entree_retraite.isdigit() and int(entree_retraite) in self.main:
             carte_retraite = int(entree_retraite)
