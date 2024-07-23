@@ -94,7 +94,7 @@ class Ordinateur:
             return coups_legaux
 
 class SimuEnGarde:
-    def __init__(self, positions, main_A, main_B, pioche, lettre_joueur_actuel, branche):
+    def __init__(self, positions, main_humain, main_assistant, pioche, lettre_joueur_actuel, branche):
         self.taille_plateau = 23
         self.plateau = Plateau(self.taille_plateau)
         self.ordinateur1 = Ordinateur('A', 'Ordinateur A')
@@ -103,8 +103,13 @@ class SimuEnGarde:
         self.gagnant = None
 
         self.plateau.positions = positions
-        self.ordinateur1.main = main_A
-        self.ordinateur2.main = main_B
+
+        if lettre_joueur_actuel == 'A':
+            self.ordinateur1.main = main_assistant
+            self.ordinateur2.main = main_humain
+        else:
+            self.ordinateur1.main = main_humain
+            self.ordinateur2.main = main_assistant
         self.pioche = pioche
         self.joueur_actuel = self.ordinateur1 if lettre_joueur_actuel == 'A' else self.ordinateur2
         self.branche = branche
@@ -396,5 +401,5 @@ class AssistantEnGarde:
         print(action, coup)
 
 # Démarrer l'assistant
-assistant = AssistantEnGarde([1,2,3,4,5], [1,1,2,5], [1, 23], False)
+assistant = AssistantEnGarde([1,2,3,4,5], [1,1,1,1], [12, 21], True)
 assistant.ia()
