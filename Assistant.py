@@ -8,7 +8,8 @@ class Plateau:
         self.positions = [1, taille]
 
 class Ordinateur:
-    def __init__(self, nom):
+    def __init__(self, lettre, nom):
+        self.lettre = lettre
         self.nom = nom
         self.main = []
         self.a_battu_en_retraite_pour_esquiver = False
@@ -19,19 +20,19 @@ class Ordinateur:
                 self.main.append(pioche.pop())
 
     def deplacer(self, plateau, pas, simulation=False):
-        pos = plateau.positions[0] if self.nom == 'A' else plateau.positions[1]
+        pos = plateau.positions[0] if self.lettre == 'A' else plateau.positions[1]
         if pas < 0:
             pas = -pas
-            nouvelle_position = pos - pas if self.nom == 'A' else pos + pas
-            if nouvelle_position <= 0 or nouvelle_position > plateau.taille or (self.nom == 'A' and nouvelle_position >= plateau.positions[1]) or (self.nom == 'B' and nouvelle_position <= plateau.positions[0]):
+            nouvelle_position = pos - pas if self.lettre == 'A' else pos + pas
+            if nouvelle_position <= 0 or nouvelle_position > plateau.taille or (self.lettre == 'A' and nouvelle_position >= plateau.positions[1]) or (self.lettre == 'B' and nouvelle_position <= plateau.positions[0]):
                 return False
         else:
-            nouvelle_position = pos + pas if self.nom == 'A' else pos - pas
-            if nouvelle_position >= plateau.positions[1] or (self.nom == 'B' and nouvelle_position <= plateau.positions[0]):
+            nouvelle_position = pos + pas if self.lettre == 'A' else pos - pas
+            if nouvelle_position >= plateau.positions[1] or (self.lettre == 'B' and nouvelle_position <= plateau.positions[0]):
                 return False
 
         if not simulation:
-            if self.nom == 'A':
+            if self.lettre == 'A':
                 plateau.positions[0] = nouvelle_position
             else:
                 plateau.positions[1] = nouvelle_position
@@ -93,11 +94,11 @@ class Ordinateur:
             return coups_legaux
 
 class SimuEnGarde:
-    def __init__(self, positions, main_A, main_B, pioche, nom_joueur_actuel, branche):
+    def __init__(self, positions, main_A, main_B, pioche, lettre_joueur_actuel, branche):
         self.taille_plateau = 23
         self.plateau = Plateau(self.taille_plateau)
-        self.ordinateur1 = Ordinateur('A')
-        self.ordinateur2 = Ordinateur('B')
+        self.ordinateur1 = Ordinateur('A', 'Ordinateur A')
+        self.ordinateur2 = Ordinateur('B', 'Ordinateur B')
         self.fini = False
         self.gagnant = None
 
@@ -105,7 +106,7 @@ class SimuEnGarde:
         self.ordinateur1.main = main_A
         self.ordinateur2.main = main_B
         self.pioche = pioche
-        self.joueur_actuel = self.ordinateur1 if nom_joueur_actuel == 'A' else self.ordinateur2
+        self.joueur_actuel = self.ordinateur1 if lettre_joueur_actuel == 'A' else self.ordinateur2
         self.branche = branche
 
     def changer_joueur(self):
@@ -229,7 +230,7 @@ class SimuEnGarde:
                     peut_bouger = True
                     break
             if not peut_bouger:
-                if ordi.nom == "A": self.gagnant = self.ordinateur2
+                if ordi.lettre == "A": self.gagnant = self.ordinateur2
                 else: self.gagnant = self.ordinateur1
                 return True
 
@@ -241,12 +242,12 @@ class SimuEnGarde:
             self.ordinateur1.a_battu_en_retraite_pour_esquiver = False
             self.ordinateur2.a_battu_en_retraite_pour_esquiver = False
             self.jouer_tour()
-            if self.joueur_actuel.nom == "A": autre_ordi = self.ordinateur2
+            if self.joueur_actuel.lettre == "A": autre_ordi = self.ordinateur2
             else: autre_ordi = self.ordinateur1
             if not autre_ordi.a_battu_en_retraite_pour_esquiver:
                 self.changer_joueur()
         if self.gagnant:
-          return self.gagnant.nom
+          return self.gagnant.lettre
         else:
           return None
 
@@ -262,24 +263,25 @@ class Plateau:
         self.positions = [1, taille]
 
 class Joueur:
-    def __init__(self, nom):
+    def __init__(self, lettre, nom):
+        self.lettre = lettre
         self.nom = nom
         self.main = []
 
     def deplacer(self, plateau, pas, simulation=False):
-        pos = plateau.positions[0] if self.nom == 'A' else plateau.positions[1]
+        pos = plateau.positions[0] if self.lettre == 'A' else plateau.positions[1]
         if pas < 0:
             pas = -pas
-            nouvelle_position = pos - pas if self.nom == 'A' else pos + pas
-            if nouvelle_position <= 0 or nouvelle_position > plateau.taille or (self.nom == 'A' and nouvelle_position >= plateau.positions[1]) or (self.nom == 'B' and nouvelle_position <= plateau.positions[0]):
+            nouvelle_position = pos - pas if self.lettre == 'A' else pos + pas
+            if nouvelle_position <= 0 or nouvelle_position > plateau.taille or (self.lettre == 'A' and nouvelle_position >= plateau.positions[1]) or (self.lettre == 'B' and nouvelle_position <= plateau.positions[0]):
                 return False
         else:
-            nouvelle_position = pos + pas if self.nom == 'A' else pos - pas
-            if nouvelle_position >= plateau.positions[1] or (self.nom == 'B' and nouvelle_position <= plateau.positions[0]):
+            nouvelle_position = pos + pas if self.lettre == 'A' else pos - pas
+            if nouvelle_position >= plateau.positions[1] or (self.lettre == 'B' and nouvelle_position <= plateau.positions[0]):
                 return False
 
         if not simulation:
-            if self.nom == 'A':
+            if self.lettre == 'A':
                 plateau.positions[0] = nouvelle_position
             else:
                 plateau.positions[1] = nouvelle_position
@@ -287,8 +289,8 @@ class Joueur:
 
 
 class IA(Joueur):
-    def __init__(self, nom):
-        super().__init__(nom)
+    def __init__(self, lettre, nom):
+        super().__init__(lettre, nom)
 
     def recup_coups_legaux_action(self, jeu, evenement):
         coups_legaux = {}
@@ -328,7 +330,7 @@ class IA(Joueur):
     def simuler_partie(self, jeu, branche):
       copie_jeu = copy.deepcopy(jeu)
       pool = copie_jeu.cartes
-      to_remove = copie_jeu.ordinateur.main + copie_jeu.defausse
+      to_remove = copie_jeu.assistant.main + copie_jeu.defausse
       for c in to_remove:
         pool.remove(c)
       random.shuffle(pool)
@@ -337,9 +339,9 @@ class IA(Joueur):
       simulation = SimuEnGarde(
           copie_jeu.plateau.positions,
           main_humain_random,
-          copie_jeu.ordinateur.main,
+          copie_jeu.assistant.main,
           pioche_random,
-          copie_jeu.ordinateur.nom,
+          copie_jeu.assistant.lettre,
           branche
       )
       gagnant = simulation.jouer_jeu()
@@ -348,10 +350,10 @@ class IA(Joueur):
     def evaluer_branche(self, jeu, branche, nb_simulations):
         resultats = {'A': 0, 'B': 0, 'draw': 0}
         for _ in range(nb_simulations):
-            nom_gagnant = self.simuler_partie(jeu, branche)
-            if nom_gagnant == 'B':
+            lettre_gagnant = self.simuler_partie(jeu, branche)
+            if lettre_gagnant == 'B':
                 resultats['B'] += 1
-            elif nom_gagnant == 'A':
+            elif lettre_gagnant == 'A':
                 resultats['A'] += 1
             else:
                 resultats['draw'] += 1
@@ -364,7 +366,7 @@ class IA(Joueur):
             for coup in coups:
               branche = [action, coup]
               resultats = self.evaluer_branche(jeu, branche, nb_simulations)
-              if self.nom == 'B':
+              if self.lettre == 'B':
                 score = resultats['B'] - resultats['A']  # Équilibre simple entre victoires et défaites
               else:
                 score = resultats['A'] - resultats['B']
@@ -375,20 +377,20 @@ class IA(Joueur):
 
 
 class AssistantEnGarde:
-    def __init__(self, main_ordinateur, defausse, positions, gauche):
+    def __init__(self, main_assistant, defausse, positions, gauche):
         self.taille_plateau = 23
         self.plateau = Plateau(self.taille_plateau)
         self.plateau.positions = positions
         self.cartes = [1, 2, 3, 4, 5] * 5
-        if gauche: self.ordinateur = IA('A')
-        else: self.ordinateur = IA('B')
-        self.ordinateur.main = main_ordinateur
+        if gauche: self.assistant = IA('A', 'IA A')
+        else: self.assistant = IA('B', 'IA B')
+        self.assistant.main = main_assistant
         self.defausse = defausse
 
     def ia(self):
-        coups_legaux = {**self.ordinateur.recup_coups_legaux_action(self, "deplacement"), **self.ordinateur.recup_coups_legaux_action(self, "attaque")}
+        coups_legaux = {**self.assistant.recup_coups_legaux_action(self, "deplacement"), **self.assistant.recup_coups_legaux_action(self, "attaque")}
         coups_legaux = {k: v for k, v in coups_legaux.items() if v}
-        branche = self.ordinateur.choisir_meilleure_branche(self, coups_legaux, 10000)
+        branche = self.assistant.choisir_meilleure_branche(self, coups_legaux, 10000)
         action = branche[0]
         coup = branche[1]
         print(action, coup)
