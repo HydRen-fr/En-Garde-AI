@@ -8,7 +8,8 @@ class Plateau:
         self.positions = [1, taille]
 
 class Ordinateur:
-    def __init__(self, nom):
+    def __init__(self, lettre, nom):
+        self.lettre = lettre
         self.nom = nom
         self.main = []
         self.a_battu_en_retraite_pour_esquiver = False
@@ -19,19 +20,19 @@ class Ordinateur:
                 self.main.append(pioche.pop())
 
     def deplacer(self, plateau, pas, simulation=False):
-        pos = plateau.positions[0] if self.nom == 'A' else plateau.positions[1]
+        pos = plateau.positions[0] if self.lettre == 'A' else plateau.positions[1]
         if pas < 0:
             pas = -pas
-            nouvelle_position = pos - pas if self.nom == 'A' else pos + pas
-            if nouvelle_position <= 0 or nouvelle_position > plateau.taille or (self.nom == 'A' and nouvelle_position >= plateau.positions[1]) or (self.nom == 'B' and nouvelle_position <= plateau.positions[0]):
+            nouvelle_position = pos - pas if self.lettre == 'A' else pos + pas
+            if nouvelle_position <= 0 or nouvelle_position > plateau.taille or (self.lettre == 'A' and nouvelle_position >= plateau.positions[1]) or (self.lettre == 'B' and nouvelle_position <= plateau.positions[0]):
                 return False
         else:
-            nouvelle_position = pos + pas if self.nom == 'A' else pos - pas
-            if nouvelle_position >= plateau.positions[1] or (self.nom == 'B' and nouvelle_position <= plateau.positions[0]):
+            nouvelle_position = pos + pas if self.lettre == 'A' else pos - pas
+            if nouvelle_position >= plateau.positions[1] or (self.lettre == 'B' and nouvelle_position <= plateau.positions[0]):
                 return False
 
         if not simulation:
-            if self.nom == 'A':
+            if self.lettre == 'A':
                 plateau.positions[0] = nouvelle_position
             else:
                 plateau.positions[1] = nouvelle_position
@@ -93,11 +94,11 @@ class Ordinateur:
             return coups_legaux
 
 class SimuEnGarde:
-    def __init__(self, positions, main_A, main_B, pioche, nom_joueur_actuel, branche):
+    def __init__(self, positions, main_A, main_B, pioche, lettre_joueur_actuel, branche):
         self.taille_plateau = 23
         self.plateau = Plateau(self.taille_plateau)
-        self.ordinateur1 = Ordinateur('A')
-        self.ordinateur2 = Ordinateur('B')
+        self.ordinateur1 = Ordinateur('A', 'Ordinateur A')
+        self.ordinateur2 = Ordinateur('B', 'Ordinateur B')
         self.fini = False
         self.gagnant = None
 
@@ -105,7 +106,7 @@ class SimuEnGarde:
         self.ordinateur1.main = main_A
         self.ordinateur2.main = main_B
         self.pioche = pioche
-        self.joueur_actuel = self.ordinateur1 if nom_joueur_actuel == 'A' else self.ordinateur2
+        self.joueur_actuel = self.ordinateur1 if lettre_joueur_actuel == 'A' else self.ordinateur2
         self.branche = branche
 
     def changer_joueur(self):
@@ -229,7 +230,7 @@ class SimuEnGarde:
                     peut_bouger = True
                     break
             if not peut_bouger:
-                if ordi.nom == "A": self.gagnant = self.ordinateur2
+                if ordi.lettre == "A": self.gagnant = self.ordinateur2
                 else: self.gagnant = self.ordinateur1
                 return True
 
@@ -241,12 +242,12 @@ class SimuEnGarde:
             self.ordinateur1.a_battu_en_retraite_pour_esquiver = False
             self.ordinateur2.a_battu_en_retraite_pour_esquiver = False
             self.jouer_tour()
-            if self.joueur_actuel.nom == "A": autre_ordi = self.ordinateur2
+            if self.joueur_actuel.lettre == "A": autre_ordi = self.ordinateur2
             else: autre_ordi = self.ordinateur1
             if not autre_ordi.a_battu_en_retraite_pour_esquiver:
                 self.changer_joueur()
         if self.gagnant:
-          return self.gagnant.nom
+          return self.gagnant.lettre
         else:
           return None
 
@@ -269,7 +270,8 @@ class Plateau:
         print(" ".join(plateau))
 
 class Joueur:
-    def __init__(self, nom):
+    def __init__(self, lettre, nom):
+        self.lettre = lettre
         self.nom = nom
         self.main = []
         self.a_battu_en_retraite_pour_esquiver = False
@@ -281,19 +283,19 @@ class Joueur:
         print(f"{self.nom} pioche.")
 
     def deplacer(self, plateau, pas, simulation=False):
-        pos = plateau.positions[0] if self.nom == 'A' else plateau.positions[1]
+        pos = plateau.positions[0] if self.lettre == 'A' else plateau.positions[1]
         if pas < 0:
             pas = -pas
-            nouvelle_position = pos - pas if self.nom == 'A' else pos + pas
-            if nouvelle_position <= 0 or nouvelle_position > plateau.taille or (self.nom == 'A' and nouvelle_position >= plateau.positions[1]) or (self.nom == 'B' and nouvelle_position <= plateau.positions[0]):
+            nouvelle_position = pos - pas if self.lettre == 'A' else pos + pas
+            if nouvelle_position <= 0 or nouvelle_position > plateau.taille or (self.lettre == 'A' and nouvelle_position >= plateau.positions[1]) or (self.lettre == 'B' and nouvelle_position <= plateau.positions[0]):
                 return False
         else:
-            nouvelle_position = pos + pas if self.nom == 'A' else pos - pas
-            if nouvelle_position >= plateau.positions[1] or (self.nom == 'B' and nouvelle_position <= plateau.positions[0]):
+            nouvelle_position = pos + pas if self.lettre == 'A' else pos - pas
+            if nouvelle_position >= plateau.positions[1] or (self.lettre == 'B' and nouvelle_position <= plateau.positions[0]):
                 return False
 
         if not simulation:
-            if self.nom == 'A':
+            if self.lettre == 'A':
                 plateau.positions[0] = nouvelle_position
             else:
                 plateau.positions[1] = nouvelle_position
@@ -301,8 +303,8 @@ class Joueur:
 
 
 class IA(Joueur):
-    def __init__(self, nom):
-        super().__init__(nom)
+    def __init__(self, lettre, nom):
+        super().__init__(lettre, nom)
 
     def recup_coups_legaux_action(self, jeu, evenement):
         coups_legaux = {}
@@ -379,10 +381,10 @@ class IA(Joueur):
     def evaluer_branche(self, jeu, branche, nb_simulations):
         resultats = {'A': 0, 'B': 0, 'draw': 0}
         for _ in range(nb_simulations):
-            nom_gagnant = self.simuler_partie(jeu, branche)
-            if nom_gagnant == 'B':
+            lettre_gagnant = self.simuler_partie(jeu, branche)
+            if lettre_gagnant == 'B':
                 resultats['B'] += 1
-            elif nom_gagnant == 'A':
+            elif lettre_gagnant == 'A':
                 resultats['A'] += 1
             else:
                 resultats['draw'] += 1
@@ -403,8 +405,8 @@ class IA(Joueur):
 
 
 class Humain(Joueur):
-    def __init__(self, nom):
-        super().__init__(nom)
+    def __init__(self, lettre, nom):
+        super().__init__(lettre, nom)
 
     def attaquer(self, plateau, cartes_attaque):
         distance = abs(plateau.positions[0] - plateau.positions[1])
@@ -446,8 +448,8 @@ class JeuEnGarde:
         self.taille_plateau = 23
         self.cartes = [1, 2, 3, 4, 5] * 5
         self.plateau = Plateau(self.taille_plateau)
-        self.humain = Humain('A')
-        self.ordinateur = IA('B')
+        self.humain = Humain('A', 'Humain')
+        self.ordinateur = IA('B', 'Ordinateur')
         self.pioche = []
         self.joueur_actuel = self.humain
         self.fini = False
@@ -557,12 +559,12 @@ class JeuEnGarde:
 
         if action == "D":
           if type(coup) == int:
-            print(f"L'ordinateur {self.ordinateur.nom} se déplace de {coup} cases.")
+            print(f"L'ordinateur {self.ordinateur.lettre} se déplace de {coup} cases.")
             self.ordinateur.deplacer(self.plateau, coup, simulation=False)
             if coup < 0 : coup = -coup # Pour revenir dans le positif
             self.ordinateur.main.remove(coup)
           elif type(coup) == list:
-            print(f"L'ordinateur {self.ordinateur.nom} se déplace de {coup[0]} cases.")
+            print(f"L'ordinateur {self.ordinateur.lettre} se déplace de {coup[0]} cases.")
             self.ordinateur.deplacer(self.plateau, coup[0], simulation=False)
             if coup[0] < 0 : coup[0] = -coup[0] # Pour revenir dans le positif
             self.ordinateur.main.remove(coup[0])
@@ -602,7 +604,7 @@ class JeuEnGarde:
                   self.gagnant = self.ordinateur
 
     def defendre(self, joueur, cartes_attaque, est_indirect):
-      if joueur.nom == "A":
+      if joueur.lettre == "A":
           if not est_indirect:
                 return joueur.defense_directe(cartes_attaque)
           else:
@@ -634,7 +636,7 @@ class JeuEnGarde:
                 return "parer"
               else:
                 joueur.deplacer(self.plateau, coup, simulation=False)
-                print(f"L'ordinateur {joueur.nom} se déplace de {coup} cases en arrière pour parer l'attaque indirecte.")
+                print(f"L'ordinateur se déplace de {coup} cases en arrière pour parer l'attaque indirecte.")
                 coup = -coup # Passer dans le positif pour remove
                 joueur.main.remove(coup)
                 joueur.piocher_cartes(self.pioche, 5 - len(joueur.main))
@@ -681,7 +683,7 @@ class JeuEnGarde:
                     break
             if not peut_bouger:
                 print("{} ne peut plus effectuer de mouvement autorisé et perd la manche.".format("L'humain" if joueur == self.humain else "L'ordinateur"))
-                if joueur.nom == "A": self.gagnant = self.ordinateur
+                if joueur.lettre == "A": self.gagnant = self.ordinateur
                 else: self.gagnant = self.humain
                 return True
 
@@ -694,7 +696,7 @@ class JeuEnGarde:
             self.humain.a_battu_en_retraite_pour_esquiver = False
             self.ordinateur.a_battu_en_retraite_pour_esquiver = False
             self.jouer_tour()
-            if self.joueur_actuel.nom == "A": autre_joueur = self.ordinateur
+            if self.joueur_actuel.lettre == "A": autre_joueur = self.ordinateur
             else: autre_joueur = self.humain
             if not autre_joueur.a_battu_en_retraite_pour_esquiver:
                 self.changer_joueur()
