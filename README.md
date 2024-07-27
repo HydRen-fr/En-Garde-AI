@@ -1,6 +1,6 @@
 ![Image du jeu](/doc/engarde.png)
 
-This directory features various computer programs based on the game En Garde, designed by Reiner Knizia. I've been playing this game since I was a kid, and being an amateur and a student of computer science, I came up with the idea of designing an unbeatable AI for this game. The program named “Humain_Ordinateur” allows a human to play against a computer that makes random moves. The “Computer_Ordinator” program simulates a random game at En Garde. The program named “Humain_IA” allows a human to play against an AI whose strategy is based on a large number of simulations at each turn to determine the best move using a simple win/loss ratio.
+This directory features various computer programs based on the game En Garde, designed by Reiner Knizia. I've been playing this game since I was a kid, and being an amateur and a student of computer science, I came up with the idea of designing an unbeatable AI for this game. The program named “Humain_Ordinateur” allows a human to play against a computer that makes random moves. The “Ordinateur_Ordinateur” program simulates a random game at En Garde. The program named “Humain_IA” allows a human to play against an AI whose strategy is based on a large number of simulations at each turn to determine the best move using a simple win/loss ratio.
 
 Notes :
 - The rules of En Garde are available in pdf format.
