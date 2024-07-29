@@ -1,0 +1,1 @@
+- Souci avec le repérage des défaites par fin de pioche
